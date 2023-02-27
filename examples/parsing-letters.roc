@@ -14,8 +14,8 @@ main =
     many letterParser
     |> parseStr inputStr
     |> Result.onErr \_ -> crash "Ooops, something went wrong parsing"
-    |> Result.map countLetters
-    |> Result.map \countLetterA -> "I counted \(countLetterA) letter A's!"
+    |> Result.map countLetterAs
+    |> Result.map \count -> "I counted \(count) letter A's!"
     |> Result.withDefault ""
     |> Stdout.line
 
@@ -23,16 +23,19 @@ Letter : [A, B, C, Other]
 
 inputStr = "AAAiBByAABBwBtCCCiAyArBBx"
 
-ifLetterA = \l -> l == A
+# Helper to check if a letter is an A tag 
+isA = \l -> l == A
 
-countLetters : List Letter -> Str
-countLetters = \letters -> 
+# Count the number of Letter A's
+countLetterAs : List Letter -> Str
+countLetterAs = \letters -> 
     letters
-    |> List.keepIf ifLetterA
+    |> List.keepIf isA
     |> List.map \_ -> 1
     |> List.sum
     |> Num.toStr
 
+# Build a custom parser to convert utf8 input into Letter tags
 letterParser : Parser (List U8) Letter
 letterParser =
     input <- buildPrimitiveParser
@@ -47,12 +50,14 @@ letterParser =
     valResult
     |> Result.map \val -> { val, input: List.dropFirst input }
 
+# Test we can parse a single B letter
 expect
     input = "B"
     parser = letterParser
     result = parseStr parser input
     result == Ok B
 
+# Test we can parse a number of different letters
 expect
     input = "BCXA"
     parser = many letterParser
