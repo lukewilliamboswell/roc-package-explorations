@@ -1,5 +1,5 @@
 package "json"
     exposes [
-        Json
+        Core
     ]
     packages {}
