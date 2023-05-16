@@ -2,3 +2,4 @@ example
 *.tar
 *.tar.br
 *.tar.gz
+*.DS_Store
